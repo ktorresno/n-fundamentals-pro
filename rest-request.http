@@ -1,0 +1,17 @@
+GET http://localhost:3000
+GET http://localhost:3000/songs
+
+GET http://localhost:3000/songs/0
+
+POST http://localhost:3000/songs
+Content-Type: application/json
+{
+  "title": "New Song #1",
+  "artists": ["NewArtist #1", "NewArtist #2"],
+  "releasedDate": "2025-11-30",
+  "duration": "03:30"
+}
+
+PUT http://localhost:3000/songs/1
+
+DELETE http://localhost:3000/songs/1
