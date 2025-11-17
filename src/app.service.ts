@@ -5,10 +5,10 @@ import { DevConfigService } from './common/providers/DevConfigService';
 export class AppService {
   constructor(
     private readonly devConfigServ: DevConfigService,
-    @Inject('CONFIG')
-    private readonly config: { port: string },
+    @Inject('PORT_CONFIG')
+    private readonly config: { port: number },
   ) {}
   getHello(): string {
-    return `Hello World! Learning NestJS is fun! ${this.devConfigServ.getDBHOST()}`; //  Port: ${this.config.port}
+    return `Hello World! Learning NestJS is fun! Host: ${this.devConfigServ.getDBHOST()} Port: ${this.config.port}`; //  Port: ${this.config.port}
   }
 }

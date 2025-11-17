@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SongsModule } from './songs/songs.module';
@@ -7,11 +7,14 @@ import { SongsController } from './songs/songs.controller';
 import { DevConfigService } from './common/providers/DevConfigService';
 import {
   getConnectionFromConfig,
-  portConfig,
+  portConfigProvider,
 } from './common/constants/connection';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { PlaylistsModule } from './playlists/playlists.module';
 
 @Module({
   imports: [
@@ -35,29 +38,38 @@ import { DataSource } from 'typeorm';
       },
     }),
     SongsModule,
+    AuthModule,
+    UsersModule,
+    PlaylistsModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    //DevConfigService,
     {
       provide: DevConfigService,
       useClass: DevConfigService,
     },
     {
-      provide: 'CONFIG',
+      provide: 'PORT_CONFIG',
       //useValue: { port: '3000' },
-      useFactory: () => {
-        return portConfig;
-      },
+      useFactory: () => portConfigProvider,
     },
   ],
 })
 export class AppModule implements NestModule {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly configService: ConfigService,
+    @Inject('PORT_CONFIG') private readonly portConfig: { port: number },
+  ) {
     console.log(
       'Data Source has been initialized!... Database: ',
       dataSource.driver.database,
     );
+
+    //const port = this.configService.get<number>('PORT') || this.portConfig.port;
+    console.log('... Port: ', this.portConfig.port);
   }
   configure(consumer: MiddlewareConsumer) {
     // Apply to all services into songs route
