@@ -38,17 +38,19 @@ export class PlaylistsController {
 
   @Get()
   @Get('all')
-  findAll(
+  @Get()
+  @Get('all')
+  async findAll(
     @Query('page', new DefaultValuePipe(undefined)) page?: string,
     @Query('limit', new DefaultValuePipe(undefined)) limit?: string,
   ): Promise<Playlist[] | Pagination<Playlist>> {
     try {
       const isPaginated = page !== undefined || limit !== undefined;
-      if (!isPaginated) return this.playlistService.findAll();
+      if (!isPaginated) return await this.playlistService.findAll();
 
       const p = Number(page);
       const l = Math.min(Number(limit), 100);
-      return this.playlistService.paginate({ page: p, limit: l });
+      return await this.playlistService.paginate({ page: p, limit: l });
     } catch (error) {
       console.error('Error fetching all playlists:', error);
       throw new HttpException(

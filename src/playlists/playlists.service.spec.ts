@@ -161,10 +161,78 @@ describe('PlaylistsService (unit)', () => {
     expect(updated.name).toBe('Updated Playlist');
   });
 
+  it('create() should throw if user not found', async () => {
+    const playload: CreatePlayListDto = {
+      name: 'Bad User Playlist',
+      user: 99999,
+      songs: [],
+    };
+    await expect(playListService.create(playload)).rejects.toThrow(
+      'User with id 99999 was not found',
+    );
+  });
+
+  it('update() should throw if user not found', async () => {
+    const seeded = await playListService.findAll();
+    const idToUpdate = seeded[0].id;
+    await expect(
+      playListService.update(idToUpdate, { user: 99999 }),
+    ).rejects.toThrow('User with id 99999 was not found');
+  });
+
+  it('update() should handle partial updates (name only)', async () => {
+    const seeded = await playListService.findAll();
+    const idToUpdate = seeded[0].id;
+    await playListService.update(idToUpdate, { name: 'New Name Only' });
+    const updated = await playListService.findOne(idToUpdate);
+    expect(updated.name).toBe('New Name Only');
+  });
+
+  it('update() should handle partial updates (user only)', async () => {
+    const seeded = await playListService.findAll();
+    const idToUpdate = seeded[0].id;
+    // Create another user
+    const user2 = await userRepo.save({
+      firstName: 'Jane',
+      lastName: 'Doe',
+      email: 'janedoe@gmail.com',
+      password: 'password123',
+      playLists: [],
+    });
+
+    await playListService.update(idToUpdate, { user: user2.id });
+    const updated = await playListService.findOne(idToUpdate);
+    expect(updated.user.id).toBe(user2.id);
+  });
+
+  it('update() should handle partial updates (songs only)', async () => {
+    const seeded = await playListService.findAll();
+    const idToUpdate = seeded[0].id;
+    // Create another song
+    const song2 = await songRepo.save({
+      title: 'Song 2',
+      artists: [],
+      releasedDate: new Date(),
+      duration: new Date('1970-01-01T00:03:00Z'),
+      lyrics: 'L2',
+    });
+
+    await playListService.update(idToUpdate, { songs: [song2.id] });
+    const updated = await playListService.findOne(idToUpdate);
+    expect(updated.songs.length).toBe(1);
+    expect(updated.songs[0].id).toBe(song2.id);
+  });
+
   it('remove() should call repo.delete when exists', async () => {
     const seeded = await playListService.findAll();
     const idToDelete = seeded[0].id;
     await playListService.remove(idToDelete);
     await expect(playListService.findOne(idToDelete)).rejects.toThrow();
+  });
+
+  it('paginate() should return paginated results', async () => {
+    const res = await playListService.paginate({ page: 1, limit: 10 });
+    expect(res.items.length).toBeGreaterThan(0);
+    expect(res.meta.totalItems).toBeGreaterThan(0);
   });
 });
