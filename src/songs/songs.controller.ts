@@ -73,8 +73,8 @@ export class SongsController {
       const isPaginated = page !== undefined || limit !== undefined;
       if (!isPaginated) return await this.songsService.findAll();
 
-      const p = Number(page);
-      const l = Math.min(Number(limit), 100);
+      const p = page ? Number(page) : 1;
+      const l = limit ? Math.min(Number(limit), 100) : 10;
       return await this.songsService.paginate({ page: p, limit: l });
     } catch (error) {
       console.error('Error fetching all songs:', error);

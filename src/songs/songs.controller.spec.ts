@@ -86,6 +86,24 @@ describe('SongsController (unit)', () => {
       expect(res).toBe(pagination);
     });
 
+    it('paginates when only page is provided', async () => {
+      const pagination = { items: [], meta: {}, links: {} };
+      service.paginate!.mockResolvedValue(pagination);
+
+      const res = await controller.findAll('1', undefined);
+      expect(service.paginate).toHaveBeenCalledWith({ page: 1, limit: 10 });
+      expect(res).toBe(pagination);
+    });
+
+    it('paginates when only limit is provided', async () => {
+      const pagination = { items: [], meta: {}, links: {} };
+      service.paginate!.mockResolvedValue(pagination);
+
+      const res = await controller.findAll(undefined, '10');
+      expect(service.paginate).toHaveBeenCalledWith({ page: 1, limit: 10 });
+      expect(res).toBe(pagination);
+    });
+
     it('wraps paginate errors in HttpException', async () => {
       const err = new Error('boom');
       service.paginate!.mockRejectedValue(err);

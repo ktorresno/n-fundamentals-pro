@@ -135,6 +135,18 @@ describe('Songs (integration)', () => {
     expect(all.length).toBe(2);
   });
 
+  it('create() should handle no artists provided', async () => {
+    const dto: CreateSongDto = {
+      title: 'No Artist Song',
+      releasedDate: new Date(),
+      duration: new Date('1970-01-01T00:03:00Z'),
+      lyrics: 'L',
+    } as unknown as CreateSongDto;
+    const created = await service.create(dto);
+    expect(created).toBeDefined();
+    expect(created.artists).toEqual([]);
+  });
+
   it('update should persist song changes', async () => {
     const [seed] = await service.findAll();
     const newTitle = 'Updated Title';
