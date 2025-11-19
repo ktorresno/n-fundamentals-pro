@@ -18,7 +18,8 @@ export class UsersService {
 
     const userToSave = { ...userDTO, password: hashedPassword } as User;
     const user = await this.usersRepository.save(userToSave);
-    return user as Omit<User, 'password'>;
+    const { password, ...result } = user;
+    return result;
   }
 
   // Find all users

@@ -52,4 +52,46 @@ describe('UsersService', () => {
     const all = await userService.findAll();
     expect(all.length).toBe(0);
   });
+
+  it('create() should save user with hashed password', async () => {
+    const dto = {
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'test@test.com',
+      password: 'password123',
+    };
+    const created = await userService.create(dto);
+    expect(created).toBeDefined();
+    expect((created as any).password).toBeUndefined();
+    expect(created.email).toBe('test@test.com');
+
+    const savedUser = await userRepo.findOneBy({ id: created.id });
+    expect(savedUser).toBeDefined();
+    expect(savedUser!.password).not.toBe('password123');
+    expect(savedUser!.password).not.toBe('');
+  });
+
+  it('findAll() should return all users', async () => {
+    await userRepo.save({
+      firstName: 'A',
+      lastName: 'B',
+      email: 'a@b.com',
+      password: 'p',
+      playLists: [],
+    });
+    const all = await userService.findAll();
+    expect(all.length).toBeGreaterThan(0);
+  });
+
+  it('findOne() should return user by id', async () => {
+    const saved = await userRepo.save({
+      firstName: 'C',
+      lastName: 'D',
+      email: 'c@d.com',
+      password: 'p',
+      playLists: [],
+    });
+    const found = await userService.findOne(saved.id);
+    expect(found?.id).toBe(saved.id);
+  });
 });
