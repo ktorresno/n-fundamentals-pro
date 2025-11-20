@@ -37,10 +37,10 @@ import { PlaylistsModule } from './playlists/playlists.module';
         };
       },
     }),
-    SongsModule,
-    AuthModule,
-    UsersModule,
     PlaylistsModule,
+    SongsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
