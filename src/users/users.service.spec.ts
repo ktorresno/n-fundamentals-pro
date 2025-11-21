@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -69,6 +70,17 @@ describe('UsersService', () => {
     expect(savedUser).toBeDefined();
     expect(savedUser!.password).not.toBe('password123');
     expect(savedUser!.password).not.toBe('');
+  });
+
+  it('create() should throw ConflictException if user already exists', async () => {
+    const dto = {
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'test@test.com',
+      password: 'password123',
+    };
+    await userService.create(dto);
+    await expect(userService.create(dto)).rejects.toThrow(ConflictException);
   });
 
   it('findAll() should return all users', async () => {

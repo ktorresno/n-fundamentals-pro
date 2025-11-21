@@ -74,7 +74,6 @@ DELETE http://localhost:3000/songs/1
 
 
 ### Create new PlayList
-
 POST http://localhost:3000/playlists
 Content-Type: application/json
 
@@ -83,13 +82,14 @@ Content-Type: application/json
     "songs": [6],
     "user": 2
 }
+
 ### Sign Up User Request
-Post http://localhost:3000/auth/signup
+POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-  "firstName": "Alice",
-  "lastName": "Smith",
-  "email": "AliceSmith@gmail.com",
-  "password": "123456"
+  "firstName": "Bruno",
+  "lastName": "Wellness",
+  "email": "bwelness@gmail.com",
+  "password": "Str0ngP@ssw0rd!"
 }

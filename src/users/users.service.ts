@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { Repository } from 'typeorm';
@@ -17,9 +17,16 @@ export class UsersService {
     const hashedPassword = await bcrypt.hash(userDTO.password, salt);
 
     const userToSave = { ...userDTO, password: hashedPassword } as User;
-    const user = await this.usersRepository.save(userToSave);
-    const { password, ...result } = user;
-    return result;
+    try {
+      const user = await this.usersRepository.save(userToSave);
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+      if (error.code === '23505' || error.code === 'SQLITE_CONSTRAINT') {
+        throw new ConflictException('User already exists');
+      }
+      throw error;
+    }
   }
 
   // Find all users

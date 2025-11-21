@@ -5,13 +5,10 @@ import { User } from '../users/users.entity';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: UsersService) {}
+  constructor(private readonly authService: UsersService) {}
 
-    @Post()
-    signup(
-        @Body()
-        userDTO: CreateUserDto
-    ) {
-        return this.authService.create(userDTO);
-    }
+  @Post('signup')
+  signup(@Body() userDTO: CreateUserDto) {
+    return this.authService.create(userDTO);
+  }
 }
