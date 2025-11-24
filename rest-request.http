@@ -93,3 +93,11 @@ content-type: application/json
   "email": "bwelness@gmail.com",
   "password": "Str0ngP@ssw0rd!"
 }
+
+### Login User
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+{
+  "email": "john@gmail.com",
+  "password": "password123"
+}
