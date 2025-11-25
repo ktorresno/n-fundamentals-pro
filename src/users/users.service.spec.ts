@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -105,5 +105,37 @@ describe('UsersService', () => {
     });
     const found = await userService.findOne(saved.id);
     expect(found?.id).toBe(saved.id);
+  });
+
+  it('create() should throw generic error if save fails', async () => {
+    const dto = {
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'test@test.com',
+      password: 'password123',
+    };
+    const spy = jest
+      .spyOn(userRepo, 'save')
+      .mockRejectedValueOnce(new Error('Generic error'));
+    await expect(userService.create(dto)).rejects.toThrow('Generic error');
+    spy.mockRestore();
+  });
+
+  it('findOneByEmail() should return user if found', async () => {
+    const saved = await userRepo.save({
+      firstName: 'E',
+      lastName: 'F',
+      email: 'e@f.com',
+      password: 'p',
+      playLists: [],
+    });
+    const found = await userService.findOneByEmail('e@f.com');
+    expect(found.id).toBe(saved.id);
+  });
+
+  it('findOneByEmail() should throw UnauthorizedException if user not found', async () => {
+    await expect(
+      userService.findOneByEmail('nonexistent@test.com'),
+    ).rejects.toThrow(UnauthorizedException);
   });
 });

@@ -60,13 +60,11 @@ describe('AuthService', () => {
 
       expect(usersService.findOneByEmail).toHaveBeenCalledWith(loginDto.email);
       expect(result).toEqual({
-        status: 200,
-        message: 'Login successful!',
         accessToken: 'mock-token',
       });
     });
 
-    it('should return 401 if password does not match', async () => {
+    it('should throw UnauthorizedException if password does not match', async () => {
       const loginDto: LoginDto = {
         email: 'test@test.com',
         password: 'wrongpassword',
@@ -80,13 +78,9 @@ describe('AuthService', () => {
       jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      const result = await service.login(loginDto);
-
-      expect(result).toEqual({
-        status: 401,
-        message: `Invalid password for user with email: ${loginDto.email}`,
-        accessToken: '',
-      });
+      await expect(service.login(loginDto)).rejects.toThrow(
+        'Invalid credentials',
+      );
     });
   });
 

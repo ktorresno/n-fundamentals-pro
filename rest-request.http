@@ -111,3 +111,7 @@ Content-Type: application/json
   "email": "bwelness@gmail.com",
   "password": "Str0ngP@ssw0rd!"
 }
+
+### Get Profile
+GET http://localhost:3000/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJ3ZWxuZXNzQGdtYWlsLmNvbSIsInN1YiI6NywiaWF0IjoxNzY0MTA1NzI2LCJleHAiOjE3NjQxOTIxMjZ9.y8Bwy9CIYqq82hx5us3RYV76Pyd-ru9ZIWknUH_0WfU
