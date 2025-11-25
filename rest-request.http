@@ -94,10 +94,20 @@ content-type: application/json
   "password": "Str0ngP@ssw0rd!"
 }
 
+### Login User failed
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "bwelness@gmail.com",
+  "password": "password123"
+}
+
 ### Login User
 POST http://localhost:3000/auth/login
 Content-Type: application/json
+
 {
-  "email": "john@gmail.com",
-  "password": "password123"
+  "email": "bwelness@gmail.com",
+  "password": "Str0ngP@ssw0rd!"
 }

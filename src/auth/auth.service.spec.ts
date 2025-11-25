@@ -4,12 +4,14 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../users/users.entity';
 import { LoginDto } from './dtos/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 jest.mock('bcryptjs');
 
 describe('AuthService', () => {
   let service: AuthService;
   let usersService: UsersService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,11 +23,18 @@ describe('AuthService', () => {
             findOneByEmail: jest.fn(),
           },
         },
+        {
+          provide: JwtService,
+          useValue: {
+            sign: jest.fn().mockReturnValue('mock-token'),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     usersService = module.get<UsersService>(UsersService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -33,7 +42,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should return user without password if validation is successful', async () => {
+    it('should return access token if validation is successful', async () => {
       const loginDto: LoginDto = {
         email: 'test@test.com',
         password: 'password',
@@ -50,11 +59,14 @@ describe('AuthService', () => {
       const result = await service.login(loginDto);
 
       expect(usersService.findOneByEmail).toHaveBeenCalledWith(loginDto.email);
-      expect(result).not.toHaveProperty('password');
-      expect(result).toEqual({ id: 1, email: 'test@test.com' });
+      expect(result).toEqual({
+        status: 200,
+        message: 'Login successful!',
+        accessToken: 'mock-token',
+      });
     });
 
-    it('should throw an error if password does not match', async () => {
+    it('should return 401 if password does not match', async () => {
       const loginDto: LoginDto = {
         email: 'test@test.com',
         password: 'wrongpassword',
@@ -68,9 +80,13 @@ describe('AuthService', () => {
       jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login(loginDto)).rejects.toThrow(
-        `Invalid password for user with email: ${loginDto.email}`,
-      );
+      const result = await service.login(loginDto);
+
+      expect(result).toEqual({
+        status: 401,
+        message: `Invalid password for user with email: ${loginDto.email}`,
+        accessToken: '',
+      });
     });
   });
 
