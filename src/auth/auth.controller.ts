@@ -1,8 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from '../users/dto/create-user-dto';
 import { LoginDto } from './dtos/login.dto';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { JwtAuthGuard } from './jwt.auth.guard';
+import { Enable2FA } from 'src/types/auth-types';
 
 @Controller('auth')
 export class AuthController {
@@ -19,5 +21,14 @@ export class AuthController {
   @Post('login')
   login(@Body() loginDTO: LoginDto) {
     return this.authService.login(loginDTO);
+  }
+
+  @Get('enable-2fa')
+  @UseGuards(JwtAuthGuard)
+  enable2FA(
+    @Request()
+    req,
+  ): Promise<Enable2FA> {
+    return this.authService.enable2FA(req.user.userId);
   }
 }

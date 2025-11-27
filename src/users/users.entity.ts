@@ -20,6 +20,12 @@ export class User {
   @Exclude() //Exclude from being selected in queries by default
   password: string;
 
+  @Column({ nullable: true, type: 'text' })
+  twoFASecret: string;
+
+  @Column({ default: false, type: 'boolean' })
+  enable2FA: boolean;
+
   @OneToMany(() => Playlist, (playlist) => playlist.user)
   playLists: Playlist[];
 }
