@@ -25,6 +25,7 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: {
             login: jest.fn(),
+            enable2FA: jest.fn(),
           },
         },
       ],
@@ -70,6 +71,17 @@ describe('AuthController', () => {
 
       expect(await controller.login(loginDto)).toBe(result);
       expect(authService.login).toHaveBeenCalledWith(loginDto);
+    });
+  });
+
+  describe('enable2FA', () => {
+    it('should enable 2FA', async () => {
+      const result = { secret: 'secret' };
+      const req = { user: { userId: 1 } };
+      jest.spyOn(authService, 'enable2FA').mockResolvedValue(result);
+
+      expect(await controller.enable2FA(req)).toBe(result);
+      expect(authService.enable2FA).toHaveBeenCalledWith(1);
     });
   });
 });

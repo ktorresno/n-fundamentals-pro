@@ -138,4 +138,15 @@ describe('UsersService', () => {
       userService.findOneByEmail('nonexistent@test.com'),
     ).rejects.toThrow(UnauthorizedException);
   });
+
+  it('updateSecretKey() should update user secret', async () => {
+    const updateResult = { affected: 1 } as any;
+    jest.spyOn(userRepo, 'update').mockResolvedValue(updateResult);
+    const result = await userService.updateSecretKey(1, 'secret');
+    expect(result).toBe(updateResult);
+    expect(userRepo.update).toHaveBeenCalledWith(
+      { id: 1 },
+      { twoFASecret: 'secret', enable2FA: true },
+    );
+  });
 });
