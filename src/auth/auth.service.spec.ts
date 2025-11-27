@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { User } from '../users/users.entity';
 import { LoginDto } from './dtos/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ArtistsService } from '../artists/artists.service';
 
 jest.mock('bcryptjs');
 
@@ -27,6 +28,12 @@ describe('AuthService', () => {
           provide: JwtService,
           useValue: {
             sign: jest.fn().mockReturnValue('mock-token'),
+          },
+        },
+        {
+          provide: ArtistsService,
+          useValue: {
+            findArtist: jest.fn(),
           },
         },
       ],

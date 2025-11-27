@@ -7,6 +7,7 @@ import { CreateSongDto } from './dto/create-song-dto';
 import { UpdateSongDto } from './dto/update-song-dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { error } from 'node:console';
+import { JwtArtistsGuard } from '../auth/jwt-artists.guard';
 
 describe('SongsController (unit)', () => {
   let controller: SongsController;
@@ -25,7 +26,10 @@ describe('SongsController (unit)', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SongsController],
       providers: [{ provide: SongsService, useValue: service }],
-    }).compile();
+    })
+      .overrideGuard(JwtArtistsGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<SongsController>(SongsController);
   });
@@ -40,7 +44,7 @@ describe('SongsController (unit)', () => {
       const song = { id: 1, title: 'T' } as Song;
       service.create!.mockResolvedValue(song);
 
-      await expect(controller.create(dto)).resolves.toBe(song);
+      await expect(controller.create(dto, {})).resolves.toBe(song);
       expect(service.create).toHaveBeenCalledWith(dto);
     });
 
@@ -53,7 +57,7 @@ describe('SongsController (unit)', () => {
       );
       service.create!.mockRejectedValue(err);
 
-      await expect(controller.create(dto)).rejects.toStrictEqual(err);
+      await expect(controller.create(dto, {})).rejects.toStrictEqual(err);
     });
   });
 

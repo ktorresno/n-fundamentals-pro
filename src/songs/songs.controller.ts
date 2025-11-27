@@ -20,7 +20,7 @@ import { Song } from './songs.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateSongDto } from './dto/update-song-dto';
-import { JwtArtistsGuard } from 'src/auth/jwt-artists.guard';
+import { JwtArtistsGuard } from '../auth/jwt-artists.guard';
 /**
  * Scope.REQUEST: A new instance of the controller is created for each request.
  * This is useful when you need to maintain state or data specific to a single request.
