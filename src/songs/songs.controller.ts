@@ -11,6 +11,8 @@ import {
   Query,
   DefaultValuePipe,
   Put,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song-dto';
@@ -18,6 +20,7 @@ import { Song } from './songs.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateSongDto } from './dto/update-song-dto';
+import { JwtArtistsGuard } from 'src/auth/jwt-artists.guard';
 /**
  * Scope.REQUEST: A new instance of the controller is created for each request.
  * This is useful when you need to maintain state or data specific to a single request.
@@ -34,7 +37,11 @@ export class SongsController {
   constructor(private readonly songsService: SongsService) {}
 
   @Post()
-  async create(@Body() createSongDto: CreateSongDto): Promise<Song> {
+  @UseGuards(JwtArtistsGuard)
+  async create(
+    @Body() createSongDto: CreateSongDto,
+    @Request() req
+  ): Promise<Song> {
     try {
       return await this.songsService.create(createSongDto);
     } catch (error) {

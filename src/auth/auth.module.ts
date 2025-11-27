@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { authConstants } from './auth.constants';
 import { JWTStrategy } from './jwt-strategy';
 import { PassportModule } from '@nestjs/passport';
+import { ArtistsModule } from 'src/artists/artists.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { PassportModule } from '@nestjs/passport';
         expiresIn: authConstants.JWT_EXPIRATION,
       },
     }),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    //PassportModule.register({ defaultStrategy: 'jwt' }),
+    ArtistsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JWTStrategy],
