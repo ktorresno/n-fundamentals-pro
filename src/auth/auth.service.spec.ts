@@ -23,6 +23,9 @@ describe('AuthService', () => {
           provide: UsersService,
           useValue: {
             findOneByEmail: jest.fn(),
+            findOne: jest.fn(),
+            updateSecretKey: jest.fn(),
+            disable2FA: jest.fn(),
           },
         },
         {
@@ -97,7 +100,13 @@ describe('AuthService', () => {
         password: 'password',
       };
 
-      jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(null);
+      const usertmp = {
+        id: 6,
+        email: 'test6@test.com',
+        password: '$test6$hashedpsswd',
+      } as User;
+
+      jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(usertmp);
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
@@ -160,9 +169,9 @@ describe('AuthService', () => {
     it('should generate new secret and update user if 2FA is disabled', async () => {
       const user = { id: 1, enable2FA: false } as User;
       jest.spyOn(usersService, 'findOne').mockResolvedValue(user);
-      jest.spyOn(usersService, 'updateSecretKey').mockResolvedValue(undefined);
+      //jest.spyOn(usersService, 'updateSecretKey').mockResolvedValue({ affected: 1 } as any);
 
-      const result = await service.enable2FA(1);
+      const result = await service.enable2FA(user.id);
 
       expect(result).toHaveProperty('secret');
       expect(usersService.updateSecretKey).toHaveBeenCalled();
