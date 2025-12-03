@@ -34,15 +34,40 @@ export class AuthService {
     }
 
     async enable2FA(userId: number): Promise<Enable2FA> {
-        const user = await this.usersService.findOne(userId);
-        if (!user) {
-            throw new UnauthorizedException('User not found');
-        }
-        if (user.enable2FA) {
+        try {
+            const user = await this.usersService.findOne(userId);
+            if (!user) {
+                throw new UnauthorizedException('User not found');
+            }
+            if (!user.enable2FA) {
+                const secret = speakeasy.generateSecret();
+                user.twoFASecret = secret.base32;
+                await this.usersService.updateSecretKey(user.id, user.twoFASecret);
+            }
             return { secret: user.twoFASecret };
+        } catch (error) {
+            throw new UnauthorizedException('Error enabling two factor authentication');
         }
-        const secret = speakeasy.generateSecret();
-        await this.usersService.updateSecretKey(user.id, secret.base32);
-        return { secret: secret.base32 };
+    }
+
+    async disable2FA(userId: number): Promise<void> {
+        this.usersService.disable2FA(userId);
+    }
+
+    async validate2FAToken(userId: number, token: string): Promise<{ verified: boolean }> {
+        try {
+            const user = await this.usersService.findOne(userId);
+            if (!user) {
+                throw new UnauthorizedException('User not found');
+            }
+            const verified = speakeasy.totp.verify({
+                secret: user.twoFASecret,
+                token: token,
+                encoding: 'base32',
+            });
+            return { verified };
+        } catch (error) {
+            throw new UnauthorizedException('Error validating token');
+        }
     }
 }

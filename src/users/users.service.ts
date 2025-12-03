@@ -4,6 +4,7 @@ import { User } from './users.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './dto/create-user-dto';
+import { v4 as uuid4 } from "uuid";
 
 @Injectable()
 export class UsersService {
@@ -15,8 +16,8 @@ export class UsersService {
   async create(userDTO: CreateUserDto): Promise<Omit<User, 'password'>> {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(userDTO.password, salt);
-
-    const userToSave = { ...userDTO, password: hashedPassword } as User;
+    const apiKey = uuid4();
+    const userToSave = { ...userDTO, password: hashedPassword, apiKey } as User;
     try {
       const user = await this.usersRepository.save(userToSave);
       const { password, ...result } = user;
@@ -41,7 +42,7 @@ export class UsersService {
   findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
-      select: ['id', 'firstName', 'lastName', 'email'],
+      select: ['id', 'firstName', 'lastName', 'email', 'twoFASecret', 'enable2FA'],
     });
   }
 
@@ -62,4 +63,16 @@ export class UsersService {
       },
     );
   }
+
+  async disable2FA(userId: number): Promise<UpdateResult> {
+    return this.usersRepository.update(
+      { id: userId },
+      {
+        twoFASecret: '',
+        enable2FA: false,
+      },
+    );
+  }
+
+
 }

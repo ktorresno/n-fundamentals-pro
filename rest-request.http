@@ -139,11 +139,11 @@ Content-Type: application/json
   "password": "Str0ngP@ssw0rd!"
 }
 
-// Token for Matrtin Garrix: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQxOTk1MDEsImV4cCI6MTc2NDI4NTkwMX0.8Au0jYkrxGMC68iIOEhZdVIzk8EQoXG1y27-CI39yfE
+// Token for Matrtin Garrix: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQ3MTQ2MDIsImV4cCI6MTc2NDgwMTAwMn0.nkWkH0bLmGG6dIRXKABuc9rrYYIhq6B10XTIgzGF8ao
 ### GetArtist
 POST http://localhost:3000/songs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQxOTk1MDEsImV4cCI6MTc2NDI4NTkwMX0.8Au0jYkrxGMC68iIOEhZdVIzk8EQoXG1y27-CI39yfE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQ3MTQ2MDIsImV4cCI6MTc2NDgwMTAwMn0.nkWkH0bLmGG6dIRXKABuc9rrYYIhq6B10XTIgzGF8ao
 
 {
   "title": "Animal's song 3",
@@ -155,4 +155,28 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpb
 
 ### Enable 2FA
 GET http://localhost:3000/auth/enable-2fa
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQxOTk1MDEsImV4cCI6MTc2NDI4NTkwMX0.8Au0jYkrxGMC68iIOEhZdVIzk8EQoXG1y27-CI39yfE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQ3MTQ2MDIsImV4cCI6MTc2NDgwMTAwMn0.nkWkH0bLmGG6dIRXKABuc9rrYYIhq6B10XTIgzGF8ao
+# "secret": "IJ6VULDPNNSGORSMME3CGV2MPJNGGZBEMMZGM6CFKZACKWDJM4ZQ"
+### Disable 2FA
+GET http://localhost:3000/auth/disable-2fa
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQ3MTQ2MDIsImV4cCI6MTc2NDgwMTAwMn0.nkWkH0bLmGG6dIRXKABuc9rrYYIhq6B10XTIgzGF8ao
+
+### Validate 2FA Token
+POST http://localhost:3000/auth/validate-2fa
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnRpbmdhcnJpeEBnbWFpbC5jb20iLCJ1c2VySWQiOjksImFydGlzdElkIjozLCJpYXQiOjE3NjQ3MTQ2MDIsImV4cCI6MTc2NDgwMTAwMn0.nkWkH0bLmGG6dIRXKABuc9rrYYIhq6B10XTIgzGF8ao
+Content-Type: application/json
+
+{
+    "token": "027277"
+}
+
+### Register an Artist
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+  "firstName": "Rome",
+  "lastName": "Thompson",
+  "email": "romethompson@gmail.com",
+  "password": "Str0ngP@ssw0rd!"
+}
